@@ -1,33 +1,69 @@
 <template>
-  <div class="about">
-    <h1>{{ message }}</h1>
-    <h1 v-once>{{ message }}</h1>
-    {{ rawHTML }}
-    <span v-html="rawHTML"></span>
-    <h1>{{ user.name }}</h1>
-
-    {{ user.name.toUpperCase() }}
-
-    {{ user.nme ? user.nme : 'NO tiene nombre' }}
-  </div>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">{{ fullname }}</h1>
+      <sys-form :inputs="inputs"/>
+    </div>
+  </section>
 </template>
 
 <script>
+import SysForm from '@/components/SysForm'
+
 export default {
   name: 'About',
 
+  components: {
+    'sys-form': SysForm
+  },
+
   data () {
     return {
-      message: 'This is an about page',
-      rawHTML: '<button>Don\'t click me!</button>',
+      inputs: [
+        {
+          id: 'name',
+          label: 'Nombre',
+          value: '',
+          hint: 'Escribe tu nombre',
+          type: 'text'
+        },
+        {
+          id: 'lastname',
+          label: 'Apellido',
+          value: '',
+          hint: 'Escribe tu apellido',
+          type: 'text'
+        }
+      ],
       user: {
-        name: 'Luis'
+        name: '',
+        lastname: '',
+        obj: {
+          hello: 'hello'
+        }
+      }
+    }
+  },
+
+  computed: {
+    fullname () {
+      return this.inputs[0].value + ' ' + this.inputs[1].value
+    }
+  },
+
+  watch: {
+    fullname (newValue, oldValue) {
+      this.user.name = this.inputs[0].value
+      this.user.lastname = this.inputs[1].value
+    },
+    user: {
+      handler (newUser, oldUser) {
+        console.log(JSON.stringify(newUser))
       },
-      roles: [
-        'admin',
-        'editor',
-        'user'
-      ]
+      deep: true
+    },
+    'user.name' (newName, oldName) {
+      console.log('Cambio el nombre')
     }
   }
 }
