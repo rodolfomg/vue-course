@@ -7,7 +7,11 @@
         :key="animal.id"
         >
         <img :src="animal.fields.Image[0].url" alt="">
-        <h3 class="is-size-4">{{ animal.fields.Name }}</h3>
+        <h3 class="is-size-4">
+          <a :href="`/animals/${animal.id}`">
+            {{ animal.fields.Name }}
+          </a>
+        </h3>
         <p>
           Animal: {{ animal.fields.Animal[0] }}
         </p>
@@ -41,12 +45,14 @@ export default {
   created () {
     airtableService.get('').then(res => {
       this.animals = res.data.records
+
+      this.$store.dispatch('storeAnimals', this.animals)
     })
   },
 
   filters: {
     age (dob) {
-      let now = new Date
+      let now = new Date()
       let months = parseInt(dob.split('-')[0] * 12) + parseInt(dob.split('-')[1])
 
       return ((now.getFullYear() * 12 + now.getMonth() - months) / 12).toFixed(2)
